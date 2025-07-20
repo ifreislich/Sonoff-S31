@@ -300,34 +300,34 @@ buttonCheck(void)
 void
 checkSchedule(void)
 {
-  static int      offset = 0;
+  static int      offset_on = 0, offset_off = 0;
   static uint8_t  wday = 8;
   time_t          t = time(NULL);
-  struct tm      *tm;
+  struct tm      *tm_off, tm_on;
 
-  tm = localtime(&t);
-  if (wday == 8) {
-    offset = floor(drand48() * 1800.0 - 900);
-    wday = tm->tm_wday;
+  tm_off = localtime(&t);
+  tm_on = *tm_off;
+  if (wday != tm_off->tm_wday) {
+    offset_on = floor(drand48() * 1800.0 - 900);
+    offset_off = floor(drand48() * 1800.0 - 900);
+    wday = tm_off->tm_wday;
   }
 
-  if (cfg.schedule[tm->tm_wday].flags & SCHED_RANDOM) {
-    t += offset;
-    tm = localtime(&t);
+  if (cfg.schedule[tm_off->tm_wday].flags & SCHED_RANDOM) {
+    t += offset_on;
+    tm_off = localtime(&t);
+    tm_on = *tm_off;
+    t += offset_off - offset_on;
+    tm_off = localtime(&t);
   }
 
-  if (~state & STATE_RELAY && cfg.schedule[wday].flags & SCHED_ON_ENABLED && tm->tm_hour == cfg.schedule[wday].h_on && tm->tm_min == cfg.schedule[wday].m_on) {
+  if (~state & STATE_RELAY && cfg.schedule[wday].flags & SCHED_ON_ENABLED && tm_on.tm_hour == cfg.schedule[wday].h_on && tm_on.tm_min == cfg.schedule[wday].m_on) {
     digitalWrite(RELAY, HIGH);
     state |= STATE_RELAY;
   }
-  else if (state & STATE_RELAY && cfg.schedule[wday].flags & SCHED_OFF_ENABLED && tm->tm_hour == cfg.schedule[wday].h_off && tm->tm_min == cfg.schedule[wday].m_off) {
+  else if (state & STATE_RELAY && cfg.schedule[wday].flags & SCHED_OFF_ENABLED && tm_off->tm_hour == cfg.schedule[wday].h_off && tm_off->tm_min == cfg.schedule[wday].m_off) {
     digitalWrite(RELAY, LOW);
     state &= ~STATE_RELAY;
-  }
-
-  if (wday != tm->tm_wday) {
-    offset = floor(drand48() * 1800.0 - 900);
-    wday = tm->tm_wday;
   }
 }
 

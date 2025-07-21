@@ -474,7 +474,7 @@ handleRoot(void)
     "%s"
     "<p><font size=1>"
     "Uptime: %d days %02d:%02d:%02d"
-    "<br>Firmware: %s %s"
+    "<br>Firmware: %s"
     "<br>Boot reason: %s"
     "</font>"
     "%s"
@@ -489,7 +489,7 @@ handleRoot(void)
     state & STATE_RELAY ? "<p><a href='/powercycle'>Load Power Cycle</a>" : "",
     state & STATE_FRAM_PRESENT ? "<div id='history'></div>" : "",
     cfg.flags & CFG_SCHEDULE ? "<p><a href='/schedule'>Schedule</a>" : "",
-    day, hr, min, sec, __DATE__, __TIME__, ESP.getResetReason().c_str(),
+    day, hr, min, sec, AUTO_VERSION, ESP.getResetReason().c_str(),
     state & STATE_FRAM_PRESENT ? R"(<script type="text/javascript">
       Dygraph.onDOMready(function onDOMready() {
         new Dygraph(document.getElementById('history'), 'data.txt', {

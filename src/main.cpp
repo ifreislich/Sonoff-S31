@@ -305,6 +305,9 @@ checkSchedule(void)
   time_t          t = time(NULL);
   struct tm      *tm_off, tm_on;
 
+  if (~cfg.flags & CFG_SCHEDULE)
+    return;
+
   tm_off = localtime(&t);
   tm_on = *tm_off;
   if (wday != tm_off->tm_wday) {

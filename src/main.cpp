@@ -367,7 +367,7 @@ resetConfig(void)
   cfg.signature = SIGNATURE;
   EEPROM.put(0, cfg);
   EEPROM.commit();
-  //ESP.restart();
+  ESP.restart();
 }
 
 void
